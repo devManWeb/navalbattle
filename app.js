@@ -3,24 +3,22 @@ let context = canvas.getContext("2d");
 
 let playerArray= createShipsArray(10,10);
 let enemyArray= createShipsArray(10,10);
-/* Simple explanation of those arrays
-* N = no ship in that position
-* A = active ship in that position
-* D = damaged/destroyed ship in that position
-*/
 
-let carrier = new Ship(0, 0, 4, "orizontal", true,false);
-let destroyer = new Ship(0, 0, 3, "orizontal", false,false);
-let frigate = new Ship(0, 0, 2, "orizontal", false,false);
+let enemyCarrier = getRandomShip(4,"enemy");
+enemyCarrier.placeShip();
+let enemyDestroyer = getRandomShip(3,"enemy");
+enemyDestroyer.placeShip();
+let enemyFrigate = getRandomShip(2,"enemy");;
+enemyFrigate.placeShip();
 
-let enemyCarrier = new Ship(0,0, 4, "orizontal", true);
-enemyCarrier.initialPositionEnemyShip();
-let enemyDestroyer = new Ship(0,0, 3, "orizontal", true);
-enemyDestroyer.initialPositionEnemyShip();
-let enemyFrigate = new Ship(0,0, 2, "orizontal", true);
-enemyFrigate.initialPositionEnemyShip();
+let playerCarrier = getRandomShip(4,"player");
+playerCarrier.placeShip();
+let playerDestroyer = getRandomShip(3,"player");
+playerDestroyer.placeShip();
+let playerFrigate = getRandomShip(2,"player");
+playerFrigate.placeShip();
 
-let player = new Game(600,0);
-let opponent = new Game(0,0);
+
+let player = new Game();
 
 drawBoard();
