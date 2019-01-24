@@ -36,12 +36,12 @@ function drawBoard(){
 
     for(i=0;i<10;i++){											//colors the Enemy grid
 		for(l=0;l<10;l++){
-			if(enemyArray[i][l] == "S"){
+			if(enemyArray[l][i] == "S"){
 				context.beginPath();
 				context.rect(600 + (i*40), 0 + (l*40), 40 ,40);
 				context.fillStyle = "grey";
 				context.fill();
-			}else if(enemyArray[i][l] == "D"){
+			}else if(enemyArray[l][i] == "D"){
 				context.beginPath();
 				context.rect(600 + (i*40), 0 + (l*40), 40 ,40);
 				context.fillStyle = "red";
@@ -57,12 +57,12 @@ function drawBoard(){
 
     for(i=0;i<10;i++){											//colors the player grid
 		for(l=0;l<10;l++){
-			if(playerArray[i][l] == "S"){
+			if(playerArray[l][i] == "S"){
 				context.beginPath();
 				context.rect(i*40,l*40, 40 ,40);
 				context.fillStyle = "grey";
 				context.fill();
-			}else if(playerArray[i][l] == "D"){
+			}else if(playerArray[l][i] == "D"){
 				context.beginPath();
 				context.rect(i*40,l*40, 40 ,40);
 				context.fillStyle = "red";
@@ -111,10 +111,8 @@ function createShipsArray(rows, columns){
 }
 
 function getRandomShip(length,user){
-	var newX = Math.floor(Math.random() * (10 - length));
-	var newY = Math.floor(Math.random() * (10 - length));
-    console.log(newX);
-    console.log(newY);
+	var newX = Math.floor(Math.random() * (11 - length));
+	var newY = Math.floor(Math.random() * (11 - length));
 	var orientation;
 	if ((Math.floor(Math.random() * 2)) == 0) {
 		orientation = "orizontal";
@@ -127,12 +125,14 @@ function getRandomShip(length,user){
 	}else if(user == "enemy"){
 		tempArray = enemyArray;
 	}
+    try {
 	if (orientation == "orizontal") {
 
 		for(i=0;i<length;i++) {
 			if(tempArray[newX + i][newY] != "W"){
+                //controls if there are ships in that position
+                break;
 				getRandomShip(length);
-				break;
 			} else {
 				tempArray[newX + i][newY] = "S";
 			}
@@ -141,14 +141,17 @@ function getRandomShip(length,user){
 	} else if (orientation == "vertical") {
 
 		for(i=0;i<length;i++) {
-			if(tempArray[newX][newY + i] != "W"){
+            if(tempArray[newX][newY + i] != "W"){
+                break;
 				getRandomShip(length);
-				break;
 			} else {
 				tempArray[newX][newY + i] = "S";
 			}
 		}
 	}
+} catch(err){
+    console.log(err);
+}
 
 	return new Ship(newX,newY,length,orientation,user,true);
 }
