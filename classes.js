@@ -36,19 +36,29 @@ class Game{
         this.positionX = this.positionX + newX;
         this.positionY = this.positionY + newY;
     }
-    returnPositionX(){
-        return (this.positionX);
+    getXPosition(){
+        return this.positionX;
     }
-    returnPositionY(){
-        return (this.positionY);
+    getYPosition(){
+        return this.positionY;
     }
     drawPointer(){
         context.beginPath();
-        context.rect(this.positionX, this.positionY, 40 ,40);
-        context.fillStyle = "blue";
+        context.rect(600 + (this.positionX *40), 0 +  (this.positionY *40), 40 ,40);
+        context.fillStyle = "#00ff00";
         context.fill();
     }
 	attack(){
-
+        if(
+            (enemyArray[this.positionY][this.positionX] != "M") &&
+            (enemyArray[this.positionY][this.positionX] != "D")
+        ){      //prevents an attack on the same spot
+            if(enemyArray[this.positionY][this.positionX] == "S"){
+                enemyArray[this.positionY][this.positionX] = "D";
+            } else {
+                enemyArray[this.positionY][this.positionX] = "M";
+            }
+            enemyAttack();
+        }
 	}
 }

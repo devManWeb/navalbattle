@@ -19,6 +19,6 @@ let playerFrigate = getRandomShip(2,"player");
 playerFrigate.placeShip();
 
 
-let player = new Game();
+let player = new Game(0,0);
 
 drawBoard();
