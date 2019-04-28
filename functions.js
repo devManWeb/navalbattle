@@ -41,8 +41,8 @@ window.onkeyup = function(e) {
 function drawBoard(){
     context.clearRect(0, 0, canvas.width, canvas.height);       //clean the canvas
 
-    for(i=0;i<10;i++){											//colors the Enemy grid
-		for(l=0;l<10;l++){
+    for(let i=0;i<10;i++){											//colors the Enemy grid
+		for(let l=0;l<10;l++){
 			if(enemyArray[l][i] == "D"){
 				context.beginPath();
 				context.rect(600 + (i*40), 0 + (l*40), 40 ,40);
@@ -62,8 +62,8 @@ function drawBoard(){
 		}
     }
 
-    for(i=0;i<10;i++){											//colors the player grid
-		for(l=0;l<10;l++){
+    for(let i=0;i<10;i++){											//colors the player grid
+		for(let l=0;l<10;l++){
 			if(playerArray[l][i] == "S"){
 				context.beginPath();
 				context.rect(i*40,l*40, 40 ,40);
@@ -88,31 +88,31 @@ function drawBoard(){
 		}
     }
 
-	for(i=0;i<10;i++){                                          //write the grid
-        for(l=0;l<10;l++){
+	for(let i=0;i<10;i++){                                          //write the grid
+        for(let l=0;l<10;l++){
             context.rect(40*i, 40*l, 40,40);
         }
     }
-     for(i=0;i<10;i++){                                         //write the enemy grid
-        for(l=0;l<10;l++){
+     for(let i=0;i<10;i++){                                         //write the enemy grid
+        for(let l=0;l<10;l++){
             context.rect(600+40*i, 0+40*l, 40,40);
         }
     }
     context.strokeStyle = "black";
     context.stroke();
-
+	 
 	player.drawPointer();
 }
 
 function createShipsArray(rows, columns){
     var tempArray = [];
-    /*
+	/*
 	* This creates the empy array for the ships
 	* description for the array
 	* W - water
-    * S - part of ship,
-    * D - damaged/destroyed ship
-    * M - missed attack
+	* S - part of ship,
+	* D - damaged/destroyed ship
+	* M - missed attack
 	*/
     for (var i = 0; i < rows; i++) {
         tempArray.push([0])
@@ -140,7 +140,7 @@ function getRandomShip(length,user){
 	}
 	if (orientation == "orizontal") {
 
-		for(i=0;i<length;i++) {
+		for(let i=0;i<length;i++) {
 			if(tempArray[newX + i][newY] != "W"){
                 //controls if there are ships in that position
                 break;
@@ -152,7 +152,7 @@ function getRandomShip(length,user){
 
 	} else if (orientation == "vertical") {
 
-		for(i=0;i<length;i++) {
+		for(let i=0;i<length;i++) {
             if(tempArray[newX][newY + i] != "W"){
                 break;
 				getRandomShip(length);

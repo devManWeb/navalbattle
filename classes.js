@@ -1,3 +1,5 @@
+"use strict";
+
 class Ship{
     constructor(positionX, positionY, length, orientation, user, enabled,definitivePosition) {
         this.positionX = positionX;
@@ -49,16 +51,41 @@ class Game{
         context.fill();
     }
 	attack(){
-        if(
-            (enemyArray[this.positionY][this.positionX] != "M") &&
-            (enemyArray[this.positionY][this.positionX] != "D")
-        ){      //prevents an attack on the same spot
-            if(enemyArray[this.positionY][this.positionX] == "S"){
-                enemyArray[this.positionY][this.positionX] = "D";
-            } else {
-                enemyArray[this.positionY][this.positionX] = "M";
-            }
-            enemyAttack();
+		if (this.checkResult()){
+		    if(
+		        (enemyArray[this.positionY][this.positionX] != "M") &&
+		        (enemyArray[this.positionY][this.positionX] != "D")
+		    ){      //prevents an attack on the same spot
+		        if(enemyArray[this.positionY][this.positionX] == "S"){
+		            enemyArray[this.positionY][this.positionX] = "D";
+		        } else {
+		            enemyArray[this.positionY][this.positionX] = "M";
+		        }
+		        enemyAttack();
+		    }
         }
+	}
+	checkResult(){ 
+		/*
+		*check the content of the enemy array and the player array
+		* to see if there are still available ships
+		*/
+		
+		function checkArray(array){
+			for(let i = 0; i<10;i++){
+				for(let l = 0; l<10;l++){		
+					if(array[	i][l] == "S"){
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		if(checkArray(enemyArray) == false){
+			alert("You won!");
+		} else if(checkArray(playerArray) == false){
+			alert("You lost");
+		}
+		return checkArray(enemyArray) && checkArray(playerArray);		
 	}
 }
