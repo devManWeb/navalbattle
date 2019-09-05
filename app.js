@@ -1,26 +1,28 @@
 "use strict";
 
-let canvas = document.getElementById("canvas");
-let context = canvas.getContext("2d");
+const canvas = document.getElementById("canvas");
+const context = canvas.getContext("2d");
 
-let playerArray= createShipsArray(10,10);
-let enemyArray= createShipsArray(10,10);
+// --------------- grid creation ---------------
+const playerArray = createShipsArray(10,10);
+const enemyArray = createShipsArray(10,10);
 
-let enemyCarrier = getRandomShip(4,"enemy");
+// --------------- enemy ship placement ---------------
+const enemyCarrier = getRandomShip(4,"enemy");
 enemyCarrier.placeShip();
-let enemyDestroyer = getRandomShip(3,"enemy");
+const enemyDestroyer = getRandomShip(3,"enemy");
 enemyDestroyer.placeShip();
-let enemyFrigate = getRandomShip(2,"enemy");;
+const enemyFrigate = getRandomShip(2,"enemy");;
 enemyFrigate.placeShip();
 
-let playerCarrier = getRandomShip(4,"player");
+// --------------- player ship placement ---------------
+const playerCarrier = getRandomShip(4,"player");
 playerCarrier.placeShip();
-let playerDestroyer = getRandomShip(3,"player");
+const playerDestroyer = getRandomShip(3,"player");
 playerDestroyer.placeShip();
-let playerFrigate = getRandomShip(2,"player");
+const playerFrigate = getRandomShip(2,"player");
 playerFrigate.placeShip();
 
-
-let player = new Game(0,0);
-
-drawBoard();
+// --------------- start of the game ---------------
+const player = new Game(0,0);
+startGame();

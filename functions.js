@@ -1,17 +1,22 @@
-var counter = (function () {
-    var temp = 0;
+"use strict";
+
+const counter = (function () {
+	//counter closure
+    let storedValue = 0;
     return function (value) {
         if (value == "addOne"){
-            return temp += 1;
-        }else if (value == "read"){
-            return temp;
+            return storedValue += 1;
+        } else if (value == "read"){
+            return storedValue;
         }
     }
 })();
 
+// --------------- keys listener ---------------
+
 window.onkeyup = function(e) {
-    var key = e.keyCode ? e.keyCode : e.which;
-    var temp = counter("read");
+	//listener for the keys
+    let key = e.keyCode ? e.keyCode : e.which;
 	if (key == 38){         //up key
         if(player.getYPosition() > 0){
             player.movePointer(0,-1);
@@ -33,67 +38,108 @@ window.onkeyup = function(e) {
 		    drawBoard();
         }
 	} else if (key == 13) {  //enter key
-        player.attack();
+        player.attack(true);
 		drawBoard();
 	}
 }
 
-function drawBoard(){
-    context.clearRect(0, 0, canvas.width, canvas.height);       //clean the canvas
+// --------------- DOM buttons listener ---------------
 
-    for(let i=0;i<10;i++){											//colors the Enemy grid
-		for(let l=0;l<10;l++){
-			if(enemyArray[l][i] == "D"){
+document.getElementById("up-button").addEventListener("click",function(e) {
+	if(player.getYPosition() > 0){
+		player.movePointer(0,-1);
+		drawBoard();
+	}
+});
+
+document.getElementById("down-button").addEventListener("click",function(e) {
+	if(player.getYPosition() < 9){
+		player.movePointer(0,1);
+		drawBoard();
+	}
+});
+
+document.getElementById("left-button").addEventListener("click",function(e) {
+	if(player.getXPosition() > 0){
+		player.movePointer(-1,0);
+		drawBoard();
+	}
+});
+
+document.getElementById("right-button").addEventListener("click",function(e) {
+	if(player.getXPosition() < 9){
+		player.movePointer(1,0);
+		drawBoard();
+	}
+});
+
+document.getElementById("fire-button").addEventListener("click",function(e) {
+	player.attack(true);
+	drawBoard();
+});
+
+/** draws the updated grid with ship info */
+function drawBoard(){
+
+	context.clearRect(0, 0, canvas.width, canvas.height);
+	
+    for(let x=0; x<10; x++){
+		for(let y=0; y<10; y++){
+
+			// --------------- colors the Enemy grid ---------------
+
+			if(enemyArray[x][y] == "D"){
 				context.beginPath();
-				context.rect(600 + (i*40), 0 + (l*40), 40 ,40);
+				context.rect(600 + (x*40), 0 + (y*40), 40 ,40);
 				context.fillStyle = "red";
 				context.fill();
-            }else if(enemyArray[l][i] == "M"){  //miss hit
+            } else if(enemyArray[x][y] == "M"){  //miss hit
                 context.beginPath();
-                context.rect(600 + (i*40), 0 + (l*40), 40 ,40);
+                context.rect(600 + (x*40), 0 + (y*40), 40 ,40);
                 context.fillStyle = "blue";
                 context.fill();
 			} else {     //the enemy grid is initally covered
 				context.beginPath();
-				context.rect(600 + (i*40), 0 + (l*40), 40 ,40);
+				context.rect(600 + (x*40), 0 + (y*40), 40 ,40);
 				context.fillStyle = "#999999";
 				context.fill();
 			}
-		}
-    }
+	
+			// --------------- colors the player grid ---------------
 
-    for(let i=0;i<10;i++){											//colors the player grid
-		for(let l=0;l<10;l++){
-			if(playerArray[l][i] == "S"){
+			if(playerArray[x][y] == "S"){
 				context.beginPath();
-				context.rect(i*40,l*40, 40 ,40);
+				context.rect(x*40,y*40, 40 ,40);
 				context.fillStyle = "#666666";
 				context.fill();
-			}else if(playerArray[l][i] == "D"){
+			} else if(playerArray[x][y] == "D"){
 				context.beginPath();
-				context.rect(i*40,l*40, 40 ,40);
+				context.rect(x*40,y*40, 40 ,40);
 				context.fillStyle = "red";
 				context.fill();
-			}else if(playerArray[l][i] == "M"){
-                    context.beginPath();
-                    context.rect(i*40,l*40, 40 ,40);
-                    context.fillStyle = "blue";
-                    context.fill();
-                }else {
+			} else if(playerArray[x][y] == "M"){
 				context.beginPath();
-				context.rect(i*40,l*40, 40 ,40);
+				context.rect(x*40,y*40, 40 ,40);
+				context.fillStyle = "blue";
+				context.fill();
+			} else {
+				context.beginPath();
+				context.rect(x*40,y*40, 40 ,40);
 				context.fillStyle = "lightblue";
 				context.fill();
 			}
-		}
-    }
 
-	for(let i=0;i<10;i++){                                          //write the grid
+		}
+	}
+	
+	// --------------- paints the player and enemy grids ---------------
+
+	for(let i=0;i<10;i++){
         for(let l=0;l<10;l++){
             context.rect(40*i, 40*l, 40,40);
         }
     }
-     for(let i=0;i<10;i++){                                         //write the enemy grid
+     for(let i=0;i<10;i++){
         for(let l=0;l<10;l++){
             context.rect(600+40*i, 0+40*l, 40,40);
         }
@@ -104,10 +150,15 @@ function drawBoard(){
 	player.drawPointer();
 }
 
+/**
+ * creates the empty array for the ships
+ * @param {number} rows 
+ * @param {number} columns 
+ * @returns {array} tempArray
+ */
 function createShipsArray(rows, columns){
     var tempArray = [];
 	/*
-	* This creates the empy array for the ships
 	* description for the array
 	* W - water
 	* S - part of ship,
@@ -123,28 +174,58 @@ function createShipsArray(rows, columns){
     return tempArray;
 }
 
+/**
+ * creates and places the desired ship
+ * @param {number} desired ship length 
+ * @param {string} user name
+ * @returns {object} new Ship istance or calls the function again
+ */
+//FIXME:sometimes we get more than 3 ships
 function getRandomShip(length,user){
-	var newX = Math.floor(Math.random() * (11 - length));
-	var newY = Math.floor(Math.random() * (11 - length));
-	var orientation;
+	
+	//random new start coordinates
+	let newX = Math.floor(Math.random() * (11 - length));
+	let newY = Math.floor(Math.random() * (11 - length));
+	
+	//random orientation
+	let orientation = "";
 	if ((Math.floor(Math.random() * 2)) == 0) {
 		orientation = "orizontal";
 	} else {
 		orientation = "vertical";
 	}
-	var tempArray = [];
+
+	//choose the array to use
+	let tempArray = [];
 	if(user == "player"){
 		tempArray = playerArray;
 	}else if(user == "enemy"){
 		tempArray = enemyArray;
 	}
-	if (orientation == "orizontal") {
 
-		for(let i=0;i<length;i++) {
+	if (orientation == "orizontal") {
+		
+		// --------------- are there ships nearby? ---------------
+
+		for(let i=0; i<10; i++){
+			if((newX - 1) >= 0){
+				if(tempArray[newX - 1][i] == "S"){
+					return getRandomShip(length,user);
+				}
+			}
+			if((newX + 1) < 10){
+				if(tempArray[newX + 1][i] == "S"){
+					return getRandomShip(length,user);			
+				}
+			}
+		}
+
+		// --------------- are there ships in that position? ---------------
+
+		for(let i=0; i<length; i++) {
+
 			if(tempArray[newX + i][newY] != "W"){
-                //controls if there are ships in that position
-                break;
-				getRandomShip(length);
+				return getRandomShip(length,user);
 			} else {
 				tempArray[newX + i][newY] = "S";
 			}
@@ -152,10 +233,22 @@ function getRandomShip(length,user){
 
 	} else if (orientation == "vertical") {
 
+		for(let i=0;i<10;i++){
+			if((newY - 1) >= 0){
+				if(tempArray[i][newY - 1] == "S"){
+					return getRandomShip(length,user);
+				}
+			}
+			if((newY + 1) < 10){
+				if(tempArray[i][newY - 1] == "S"){
+					return getRandomShip(length,user);			
+				}
+			}
+		}
+
 		for(let i=0;i<length;i++) {
             if(tempArray[newX][newY + i] != "W"){
-                break;
-				getRandomShip(length);
+				return getRandomShip(length,user);
 			} else {
 				tempArray[newX][newY + i] = "S";
 			}
@@ -165,17 +258,6 @@ function getRandomShip(length,user){
 	return new Ship(newX,newY,length,orientation,user,true);
 }
 
-function enemyAttack(){
-    positionX = Math.floor(Math.random() * (10));
-    positionY = Math.floor(Math.random() * (10));
-    if(
-        (playerArray[positionY][positionX] == "M") &&
-        (playerArray[positionY][positionX] == "D")
-    ){  //prevents an attack on the same spot
-        enemyAttack();
-    } else if(playerArray[positionY][positionX] == "S"){
-        playerArray[positionY][positionX] = "D";
-    } else {
-        playerArray[positionY][positionX] = "M";
-    }
+function startGame(){
+	drawBoard();
 }

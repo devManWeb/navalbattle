@@ -6,19 +6,22 @@
         <title>Naval battle</title>
 </head>
 <body>
-    <div>
-        <canvas id="canvas" style="border:2px solid black;" width="1024" height="400">
+    <div id="canvas-container">
+        <canvas id="canvas" style="border:2px solid black;" width="1000" height="400"></canvas>
     </div>
-    <div>
-        <h2>Commands</h2>
-        <ul>
-            <li>Up key: Go up</li>
-            <li>Down key: Go down</li>
-            <li>Left key: Go left</li>
-            <li>Right key: Go right</li>
-            <li>Enter key: Shoot</li>
-        </ul>
+
+    <div id="joystick-buttons">
+
+        <div class="command-buttons">
+                <button id="up-button">Up</button>
+                <br>
+                <button id="left-button">Left</button>&nbsp;<button id="fire-button">Fire!</button>&nbsp;<button id="right-button">Right</button>
+                <br>
+                <button id="down-button">Down</button>
+        </div>
+
     </div>
+
     <script src="classes.js"></script>
     <script src="functions.js"></script>
     <script src="app.js"></script>

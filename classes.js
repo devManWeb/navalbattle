@@ -1,28 +1,30 @@
 "use strict";
 
 class Ship{
-    constructor(positionX, positionY, length, orientation, user, enabled,definitivePosition) {
+
+    constructor(positionX, positionY, length, orientation, user, enabled) {
         this.positionX = positionX;
         this.positionY = positionY;
         this.length = length;
         this.orientation = orientation;
 		this.user = user;
         this.enabled = enabled;
-        this.definitivePosition = false;
-    }
+	}
+	
+	/** writes the ship on the object grid array */
 	placeShip(){
-		var array;
+		let array = [];
 		if(this.user == "enemy"){
 			array = enemyArray;
 		}else if(this.user == "player"){
 			array = playerArray;
 		}
 		if (this.orientation == "orizontal") {
-			for(var i=0;i<length;i++) {
+			for(let i=0;i<length;i++) {
 				array[this.positionX + i][this.positionY] = "S";
 			}
 		} else if (this.orientation == "vertical") {
-			for(var i=0;i<length;i++) {
+			for(let i=0;i<length;i++) {
 				array[this.positionX][this.positionY + i] = "S";
 			}
 		}
@@ -30,62 +32,126 @@ class Ship{
 }
 
 class Game{
+
     constructor(positionX, positionY){
         this.positionX = positionX;
         this.positionY = positionY;
-    }
+	}
+	
+	/**
+	 * moves the player pointer
+	 * @param {number} newX position
+	 * @param {number} newY position
+	 */
     movePointer(newX,newY) {
         this.positionX = this.positionX + newX;
         this.positionY = this.positionY + newY;
-    }
+	}
+	
+	/**
+	 * @returns {number} pointer x position
+	 */
     getXPosition(){
         return this.positionX;
-    }
+	}
+
+	/**
+	 * @returns {number} pointer y position
+	 */
     getYPosition(){
         return this.positionY;
-    }
+	}
+	
+	/**takes care of designing the attack marker*/
     drawPointer(){
         context.beginPath();
         context.rect(600 + (this.positionX *40), 0 +  (this.positionY *40), 40 ,40);
         context.fillStyle = "#00ff00";
         context.fill();
-    }
-	attack(){
-		if (this.checkResult()){
-		    if(
-		        (enemyArray[this.positionY][this.positionX] != "M") &&
-		        (enemyArray[this.positionY][this.positionX] != "D")
-		    ){      //prevents an attack on the same spot
-		        if(enemyArray[this.positionY][this.positionX] == "S"){
-		            enemyArray[this.positionY][this.positionX] = "D";
-		        } else {
-		            enemyArray[this.positionY][this.positionX] = "M";
-		        }
-		        enemyAttack();
-		    }
-        }
 	}
-	checkResult(){ 
-		/*
-		*check the content of the enemy array and the player array
-		* to see if there are still available ships
-		*/
+	
+	/** 
+	 * manages the enemy attack
+	 * @param {boolean} isPlayer true if player is using this method
+	 */
+	attack(isPlayer){
+
+		if (this.isTheGameStillActive()){
 		
-		function checkArray(array){
+			let contentPosition = "";
+
+			if (isPlayer){
+
+				contentPosition = enemyArray[this.positionX][this.positionY];
+
+				if(contentPosition != "M" && contentPosition != "D"){      
+					//prevents an attack on the same spot
+					if(contentPosition == "S"){
+						enemyArray[this.positionX][this.positionY] = "D";
+					} else {
+						enemyArray[this.positionX][this.positionY] = "M";
+					}
+					//in the end, the enemy has to attack
+					this.attack(false);
+				}
+
+			} else {
+				
+				let positionX = Math.floor(Math.random() * (10));
+				let positionY = Math.floor(Math.random() * (10));
+
+				contentPosition = playerArray[positionX][positionY];
+
+				if(contentPosition == "M" && contentPosition == "D"){  
+					/*
+					* prevents an attack on the same spot
+					* by calling the method one more time
+					*/
+					this.attack(false);
+
+				} else if(contentPosition == "S"){
+					playerArray[positionX][positionY] = "D";
+				} else {
+					//FIXME: sometimes we hit the water
+					playerArray[positionX][positionY] = "M";
+				}
+			}
+
+		}
+	}
+
+	/**
+	* check the content of the enemy array and the player array
+	* to see if there are still available ships
+	* @returns {boolean} result
+	*/
+	isTheGameStillActive(){ 
+		
+		/**
+		 * Are there still ships in the selected array?
+		 * @param {array} selected array
+		 * @returns {boolean} result
+		 */
+		function noMoreShips(array){
 			for(let i = 0; i<10;i++){
 				for(let l = 0; l<10;l++){		
-					if(array[	i][l] == "S"){
-						return true;
+					if(array[i][l] == "S"){
+						return false;
 					}
 				}
 			}
-			return false;
+			return true;
 		}
-		if(checkArray(enemyArray) == false){
+
+		if(noMoreShips(enemyArray)){
 			alert("You won!");
-		} else if(checkArray(playerArray) == false){
+			return false;
+		} else if(noMoreShips(playerArray)){
 			alert("You lost");
-		}
-		return checkArray(enemyArray) && checkArray(playerArray);		
+			return false;
+		} else {
+			return true;
+		}	
 	}
+
 }

@@ -1,0 +1,56 @@
+#canvas-container{
+    width:100%;
+    text-align: center;
+}
+
+canvas {
+    /* mantain the proportion */
+    width: 80vw;
+    height: 32vw;
+}
+
+#joystick-buttons{
+    /* div used to center .command-buttons*/
+    width: 80%;
+    margin-left:10%;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.command-buttons {
+    position: relative;
+    text-align: center;
+    margin-left:5%;
+    margin-right:5%;
+    margin-top:2%;
+    background-color:grey;
+    border-radius: 25%;
+    /* to contain all buttons */
+    display: inline-block;
+    height:100%;
+}
+
+button{
+    /*centers the text*/
+    padding:0px; 
+    font-size:2vh;
+    width:10vw;
+    margin-top:1%;
+    margin-bottom:1%;
+    font-size:2vw;
+    min-height:3vw;
+}
+
+@media screen and (max-width:500px) {
+    canvas {
+        /* mantain the proportion */
+        width: 95vw;
+        height: 38vw;
+    }
+    button{
+        /*em insteam ov vw because it's still readable
+        if we change the screen orientation */
+        font-size:0.8em;
+        width:20vw;
+    }
+}
