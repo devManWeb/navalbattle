@@ -33,9 +33,9 @@ class Ship{
 
 class Game{
 
-    constructor(positionX, positionY){
-        this.positionX = positionX;
-        this.positionY = positionY;
+    constructor(){
+        this.positionX = 0;
+        this.positionY = 0;
 	}
 	
 	/**
@@ -44,8 +44,8 @@ class Game{
 	 * @param {number} newY position
 	 */
     movePointer(newX,newY) {
-        this.positionX = this.positionX + newX;
-        this.positionY = this.positionY + newY;
+		this.positionX = this.positionX + newX;
+		this.positionY = this.positionY + newY;
 	}
 	
 	/**

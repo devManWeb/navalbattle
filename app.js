@@ -24,5 +24,5 @@ const playerFrigate = getRandomShip(2,"player");
 playerFrigate.placeShip();
 
 // --------------- start of the game ---------------
-const player = new Game(0,0);
+const player = new Game();
 startGame();

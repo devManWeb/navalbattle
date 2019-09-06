@@ -1,82 +1,78 @@
 "use strict";
 
-const counter = (function () {
-	//counter closure
-    let storedValue = 0;
-    return function (value) {
-        if (value == "addOne"){
-            return storedValue += 1;
-        } else if (value == "read"){
-            return storedValue;
-        }
-    }
-})();
+// --------------- move and attack functions ---------------
+
+function up(){
+	if(player.getYPosition() > 0){
+		player.movePointer(0,-1);
+		drawBoard();
+	}
+}
+
+function down(){
+	if(player.getYPosition() < 9){
+		player.movePointer(0,1);
+		drawBoard();
+	}
+}
+
+function left(){
+	if(player.getXPosition() > 0){
+		player.movePointer(-1,0);
+		drawBoard();
+	}
+	console.log("sinistra");
+}
+
+function right() {
+	if(player.getXPosition() < 9){
+		player.movePointer(1,0);
+		drawBoard();
+	}
+	console.log("destra");
+}
+
+function fire(){
+	player.attack(true);
+	drawBoard();
+	console.log("colpisco");
+}
 
 // --------------- keys listener ---------------
 
 window.onkeyup = function(e) {
-	//listener for the keys
-    let key = e.keyCode ? e.keyCode : e.which;
+	let key = e.keyCode ? e.keyCode : e.which;
 	if (key == 38){         //up key
-        if(player.getYPosition() > 0){
-            player.movePointer(0,-1);
-		    drawBoard();
-        }
+		up();
 	} else if (key == 40) {  //down key
-        if(player.getYPosition() < 9){
-            player.movePointer(0,1);
-            drawBoard();
-        }
+		down();
 	} else if (key == 37) {  //left key
-        if(player.getXPosition() > 0){
-            player.movePointer(-1,0);
-		    drawBoard();
-        }
+		left();
 	} else if (key == 39) {  //right key
-        if(player.getXPosition() < 9){
-            player.movePointer(1,0);
-		    drawBoard();
-        }
+		right();
 	} else if (key == 13) {  //enter key
-        player.attack(true);
-		drawBoard();
+		fire();
 	}
 }
 
 // --------------- DOM buttons listener ---------------
 
-document.getElementById("up-button").addEventListener("click",function(e) {
-	if(player.getYPosition() > 0){
-		player.movePointer(0,-1);
-		drawBoard();
-	}
-});
-
-document.getElementById("down-button").addEventListener("click",function(e) {
-	if(player.getYPosition() < 9){
-		player.movePointer(0,1);
-		drawBoard();
-	}
-});
-
-document.getElementById("left-button").addEventListener("click",function(e) {
-	if(player.getXPosition() > 0){
-		player.movePointer(-1,0);
-		drawBoard();
-	}
-});
-
-document.getElementById("right-button").addEventListener("click",function(e) {
-	if(player.getXPosition() < 9){
-		player.movePointer(1,0);
-		drawBoard();
-	}
-});
-
-document.getElementById("fire-button").addEventListener("click",function(e) {
-	player.attack(true);
-	drawBoard();
-});
+for(let i = 0; i< document.getElementsByTagName("button").length; i++){
+	document.getElementsByTagName("button")[i].addEventListener("mouseup",function(e) {
+		//mouseup is used instead of click to avoid trouble with enter
+		if (i == 0){         //up key
+			up();
+		} else if (i == 4) {  //down key
+			down();
+		} else if (i == 1) {  //left key
+			left();
+		} else if (i == 3) {  //right key
+			right();
+		} else if (i == 2) {  //enter key
+			fire();
+		}
+	});
+}
 
 /** draws the updated grid with ship info */
 function drawBoard(){
