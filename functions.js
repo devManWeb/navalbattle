@@ -21,7 +21,6 @@ function left(){
 		player.movePointer(-1,0);
 		drawBoard();
 	}
-	console.log("sinistra");
 }
 
 function right() {
@@ -29,13 +28,11 @@ function right() {
 		player.movePointer(1,0);
 		drawBoard();
 	}
-	console.log("destra");
 }
 
 function fire(){
 	player.attack(true);
 	drawBoard();
-	console.log("colpisco");
 }
 
 // --------------- keys listener ---------------
@@ -84,47 +81,36 @@ function drawBoard(){
 
 			// --------------- colors the Enemy grid ---------------
 
-			if(enemyArray[x][y] == "D"){
-				context.beginPath();
-				context.rect(600 + (x*40), 0 + (y*40), 40 ,40);
+			context.beginPath();
+			
+			if(enemyArray[x][y] == "D"){	
 				context.fillStyle = "red";
-				context.fill();
             } else if(enemyArray[x][y] == "M"){  //miss hit
-                context.beginPath();
-                context.rect(600 + (x*40), 0 + (y*40), 40 ,40);
                 context.fillStyle = "blue";
-                context.fill();
-			} else {     //the enemy grid is initally covered
-				context.beginPath();
-				context.rect(600 + (x*40), 0 + (y*40), 40 ,40);
-				context.fillStyle = "#999999";
-				context.fill();
+			} else {     
+				//the enemy grid is initially covered
+				context.fillStyle = "#999999";	
 			}
+
+			context.rect(600 + (x*40), 0 + (y*40), 40 ,40);
+			context.fill();
 	
 			// --------------- colors the player grid ---------------
 
+			context.beginPath();
+			
 			if(playerArray[x][y] == "S"){
-				context.beginPath();
-				context.rect(x*40,y*40, 40 ,40);
 				context.fillStyle = "#666666";
-				context.fill();
 			} else if(playerArray[x][y] == "D"){
-				context.beginPath();
-				context.rect(x*40,y*40, 40 ,40);
 				context.fillStyle = "red";
-				context.fill();
 			} else if(playerArray[x][y] == "M"){
-				context.beginPath();
-				context.rect(x*40,y*40, 40 ,40);
 				context.fillStyle = "blue";
-				context.fill();
 			} else {
-				context.beginPath();
-				context.rect(x*40,y*40, 40 ,40);
 				context.fillStyle = "lightblue";
-				context.fill();
 			}
 
+			context.rect(x*40,y*40, 40 ,40);
+			context.fill();
 		}
 	}
 	
@@ -153,7 +139,7 @@ function drawBoard(){
  * @returns {array} tempArray
  */
 function createShipsArray(rows, columns){
-    var tempArray = [];
+    let tempArray = [];
 	/*
 	* description for the array
 	* W - water
@@ -161,9 +147,9 @@ function createShipsArray(rows, columns){
 	* D - damaged/destroyed ship
 	* M - missed attack
 	*/
-    for (var i = 0; i < rows; i++) {
+    for (let i = 0; i < rows; i++) {
         tempArray.push([0])
-        for (var j = 0; j < columns; j++) {
+        for (let j = 0; j < columns; j++) {
             tempArray[i][j] = "W";
         }
     }
@@ -172,11 +158,11 @@ function createShipsArray(rows, columns){
 
 /**
  * creates and places the desired ship
+ * this function uses the recursion until I can position the ship correctly
  * @param {number} desired ship length 
  * @param {string} user name
  * @returns {object} new Ship istance or calls the function again
  */
-//FIXME:sometimes we get more than 3 ships
 function getRandomShip(length,user){
 	
 	//random new start coordinates
@@ -185,19 +171,11 @@ function getRandomShip(length,user){
 	
 	//random orientation
 	let orientation = "";
-	if ((Math.floor(Math.random() * 2)) == 0) {
-		orientation = "orizontal";
-	} else {
-		orientation = "vertical";
-	}
+	Math.floor(Math.random() * 2) == 0 ? orientation = "orizontal" : orientation = "vertical";
 
 	//choose the array to use
 	let tempArray = [];
-	if(user == "player"){
-		tempArray = playerArray;
-	}else if(user == "enemy"){
-		tempArray = enemyArray;
-	}
+	user == "player" ? tempArray = playerArray : tempArray = enemyArray;
 
 	if (orientation == "orizontal") {
 		
@@ -216,15 +194,18 @@ function getRandomShip(length,user){
 			}
 		}
 
-		// --------------- are there ships in that position? ---------------
+		// --------------- Is there something there? ---------------
 
 		for(let i=0; i<length; i++) {
-
 			if(tempArray[newX + i][newY] != "W"){
 				return getRandomShip(length,user);
-			} else {
-				tempArray[newX + i][newY] = "S";
 			}
+		}
+
+		// --------------- I place the ship on the array ---------------
+
+		for(let i=0; i<length; i++) {
+			tempArray[newX + i][newY] = "S";
 		}
 
 	} else if (orientation == "vertical") {
@@ -236,18 +217,20 @@ function getRandomShip(length,user){
 				}
 			}
 			if((newY + 1) < 10){
-				if(tempArray[i][newY - 1] == "S"){
+				if(tempArray[i][newY + 1] == "S"){
 					return getRandomShip(length,user);			
 				}
 			}
 		}
 
 		for(let i=0;i<length;i++) {
-            if(tempArray[newX][newY + i] != "W"){
+			if(tempArray[newX][newY + i] != "W"){
 				return getRandomShip(length,user);
-			} else {
-				tempArray[newX][newY + i] = "S";
 			}
+		}
+
+		for(let i=0;i<length;i++) {
+			tempArray[newX][newY + i] = "S";
 		}
 	}
 
