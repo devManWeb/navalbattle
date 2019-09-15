@@ -97,24 +97,29 @@ class Game{
 
 			} else {
 				
-				let positionX = Math.floor(Math.random() * (10));
-				let positionY = Math.floor(Math.random() * (10));
+				/** function called to do the enemy attack */
+				function doEnemyAttack(){
 
-				contentPosition = playerArray[positionX][positionY];
+					let positionX = Math.floor(Math.random() * (10));
+					let positionY = Math.floor(Math.random() * (10));
+	
+					contentPosition = playerArray[positionX][positionY];
+	
+					if(contentPosition == "S"){
+						playerArray[positionX][positionY] = "D";
+					} else if(contentPosition == "W"){
+						playerArray[positionX][positionY] = "M";
+					} else {
+						/*
+						* prevents an attack on the same spot
+						* by calling the internal function one more time
+						*/
+						doEnemyAttack();
+					}
 
-				if(contentPosition == "M" && contentPosition == "D"){  
-					/*
-					* prevents an attack on the same spot
-					* by calling the method one more time
-					*/
-					this.attack(false);
-
-				} else if(contentPosition == "S"){
-					playerArray[positionX][positionY] = "D";
-				} else {
-					//FIXME: sometimes we hit the water
-					playerArray[positionX][positionY] = "M";
 				}
+
+				doEnemyAttack();
 			}
 
 		}
