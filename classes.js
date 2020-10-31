@@ -35,7 +35,10 @@ class Game{
 
     constructor(){
         this.positionX = 0;
-        this.positionY = 0;
+		this.positionY = 0;
+		this.enemyLastAttackX = undefined;
+		this.enemyLastAttackY = undefined;
+		this.enemyRecursionCounter = 0;
 	}
 	
 	/**
@@ -69,59 +72,110 @@ class Game{
         context.fillStyle = "#00ff00";
         context.fill();
 	}
+
+	/**
+	 * @param {number} iterationNumber used to not exceed the max number of iterations
+	 * @returns {array} coordinates for the next method
+	 */
+	generateCoordinates(iterationNumber = 0){
+
+		let positionX = 0;
+		let positionY = 0;
+
+		/**
+		 * @returns 1, 0 or -1
+		 */
+		function intBetweenMinusOneAndOne(){
+			return Math.floor(Math.random() * 3) - 1;  
+		}
+
+		if(this.enemyLastAttackX == undefined && this.enemyLastAttackY == undefined){
+			positionX = Math.floor(Math.random() * (10));
+			positionY = Math.floor(Math.random() * (10));
+		} else {
+			//if the computer hits a player's ship, the next attack will be nearby
+			positionX = this.enemyLastAttackX + intBetweenMinusOneAndOne();
+			positionY = this.enemyLastAttackY + intBetweenMinusOneAndOne();
+			
+			if(positionX < 0 || positionX > 9 || positionY < 0 || positionY > 9){
+				//if the numbers are out of the allowed range
+				//the function is called another time
+				return this.generateCoordinates();
+			}
+		}
+
+		let contentPosition = playerArray[positionX][positionY];
+
+		if(contentPosition == "M" || contentPosition == "D"){
+			//the computer cannot use an already selected spot
+			if(iterationNumber < 100){
+				iterationNumber = iterationNumber + 1;
+				return this.generateCoordinates(iterationNumber);
+			} else {
+				this.enemyLastAttackX = undefined;
+				this.enemyLastAttackY = undefined;
+				return this.generateCoordinates();
+			}
+		} else {
+			return [positionX,positionY];
+		}
+	}
+
+	/**
+	 * manages the values on playerArray
+	 * with the coordinates provided by the method above
+	 */
+	enemyAttack() {
+
+		const coordinates = this.generateCoordinates();
+		const positionX = coordinates[0];
+		const positionY = coordinates[1];
+
+		let contentPosition = playerArray[positionX][positionY];
+		if(contentPosition == "S"){
+			playerArray[positionX][positionY] = "D";
+			//memorize last attack position only if we hit a ship
+			this.enemyLastAttackX = positionX;
+			this.enemyLastAttackY = positionY;
+		} else if(contentPosition == "W"){
+			playerArray[positionX][positionY] = "M";
+		}
+
+		//isTheGameStillActive is used to show a message
+		// to the user in case the computer wins
+		this.isTheGameStillActive();
+	}
+
+	/**
+	 * manages the values on enemyArray
+	 * with the coordinates provided by the user
+	 */
+	playerAttack(){
+		let contentPosition = "";
+		contentPosition = enemyArray[this.positionX][this.positionY];
+
+		if(contentPosition != "M" && contentPosition != "D"){      
+			//prevents an attack on the same spot
+			if(contentPosition == "S"){
+				enemyArray[this.positionX][this.positionY] = "D";
+			} else {
+				enemyArray[this.positionX][this.positionY] = "M";
+			}
+			//in the end, the enemy has to attack
+			this.attack(false);
+		}
+	}
 	
 	/** 
-	 * manages the enemy attack
 	 * @param {boolean} isPlayer true if player is using this method
 	 */
 	attack(isPlayer){
-
 		if (this.isTheGameStillActive()){
-		
-			let contentPosition = "";
-
-			if (isPlayer){
-
-				contentPosition = enemyArray[this.positionX][this.positionY];
-
-				if(contentPosition != "M" && contentPosition != "D"){      
-					//prevents an attack on the same spot
-					if(contentPosition == "S"){
-						enemyArray[this.positionX][this.positionY] = "D";
-					} else {
-						enemyArray[this.positionX][this.positionY] = "M";
-					}
-					//in the end, the enemy has to attack
-					this.attack(false);
-				}
-
+			if(isPlayer){
+				this.playerAttack();
 			} else {
-				
-				/** function called to do the enemy attack */
-				function doEnemyAttack(){
-
-					let positionX = Math.floor(Math.random() * (10));
-					let positionY = Math.floor(Math.random() * (10));
-	
-					contentPosition = playerArray[positionX][positionY];
-	
-					if(contentPosition == "S"){
-						playerArray[positionX][positionY] = "D";
-					} else if(contentPosition == "W"){
-						playerArray[positionX][positionY] = "M";
-					} else {
-						/*
-						* prevents an attack on the same spot
-						* by calling the internal function one more time
-						*/
-						doEnemyAttack();
-					}
-
-				}
-
-				doEnemyAttack();
+				this.enemyAttack();
 			}
-
 		}
 	}
 
